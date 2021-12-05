@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Problem2 {
     public static void main (String [] args) {
-        Integer [] numList = {1,2,3,4,5};
+        Integer [] numList = {199,200,208,210,200,207,240,269,260,263};
         List <Integer> inputs = new ArrayList<>(Arrays.asList(numList));
         IncCounter counter = new IncCounterImplProb2();
-        System.out.println((1 + 2 + 3) == counter.countIncrements(inputs));
+        System.out.println(counter.countIncrements(inputs) == 5);
     }
 }
