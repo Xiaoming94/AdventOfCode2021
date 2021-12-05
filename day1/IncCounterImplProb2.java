@@ -15,7 +15,6 @@ public class IncCounterImplProb2 implements IncCounter{
                 ++increments;
             
         }
-        System.out.println(increments);
         return increments;
     }
 }
