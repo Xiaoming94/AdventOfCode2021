@@ -13,7 +13,7 @@ public class IncCounterImplProb2 implements IncCounter{
             int currentSum = oldSum - last + current;
             if (currentSum > oldSum)
                 ++increments;
-            
+            oldSum = currentSum;
         }
         return increments;
     }
