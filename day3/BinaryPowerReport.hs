@@ -1,11 +1,14 @@
 module BinaryPowerReport (
-   Bin 
+   Bin (..),
+   calcTemperature
 ) where
 
 import Data.List
+import Data.Streaming.Network (bindPortGen)
 -- Defining a type for binary numbers
 -- This number is defined backwards because this is easier to work with
 data Bin = LSB | One Bin | Zero Bin deriving Show
+type BinReport = [[Integer]]
 
 exInput = [
            [0,0,1,0,0]
@@ -79,3 +82,10 @@ calcGamma ((ones,zeros):pairsList)
 
 calcEpsilon :: Bin -> Bin
 calcEpsilon = binNot 
+
+calcTemperature :: BinReport -> Integer
+calcTemperature report = toInt gamma * toInt epsilon
+    where
+        processedReportData = map (countOnesAndZeros . toBinary) $ transpose report
+        gamma               = calcGamma processedReportData
+        epsilon             = calcEpsilon gamma 
