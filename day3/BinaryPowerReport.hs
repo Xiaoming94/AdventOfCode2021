@@ -69,7 +69,13 @@ binNot LSB         = LSB
 binNot (One rest)  = Zero (binNot rest)
 binNot (Zero rest) = One (binNot rest)
 
--- Calculating Gamma and Epsilon Binaries
+-- Calculate Gamma and Epsilon from pairs of ones and zeros counts
 
+calcGamma :: [(Integer, Integer)] -> Bin
+calcGamma []         = LSB
+calcGamma ((ones,zeros):pairsList)
+    | ones > zeros = One (calcGamma pairsList)
+    | otherwise    = Zero (calcGamma pairsList)
 
-
+calcEpsilon :: Bin -> Bin
+calcEpsilon = binNot 
