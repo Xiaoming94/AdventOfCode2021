@@ -59,6 +59,17 @@ countOnes = flip countOnes' 0
         countOnes' (Zero rest) ones = countOnes' rest ones 
         countOnes' (One rest) ones  = countOnes' rest (ones + 1)
 
+-- Function for counting both ones and zeros and build a pair
 countOnesAndZeros :: Bin -> (Integer, Integer)
 countOnesAndZeros bin = (countOnes bin, countZeros bin)
+
+-- Flipping zeros to ones and ones to zeros in a binary number
+binNot :: Bin -> Bin
+binNot LSB         = LSB
+binNot (One rest)  = Zero (binNot rest)
+binNot (Zero rest) = One (binNot rest)
+
+-- Calculating Gamma and Epsilon Binaries
+
+
 
