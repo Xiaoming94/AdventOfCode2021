@@ -1,6 +1,5 @@
 import System.IO
 import Control.Monad
-import Data.List.Split
 import Command
 
 main = do
