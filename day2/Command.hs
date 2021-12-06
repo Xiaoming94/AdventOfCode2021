@@ -1,7 +1,9 @@
 module Command (
     Command(Forward, Up, Down), 
     SubCoord,
-    parseCommand) where
+    parseCommand,
+    readCommandsList,
+    prodSubCoord) where
 
 data Command = Forward Integer | Up Integer | Down Integer deriving (Show)
 type SubCoord = (Integer, Integer) --- (Horizontal position, Vertical position)
