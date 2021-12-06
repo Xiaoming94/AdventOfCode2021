@@ -3,7 +3,10 @@ module Command (
     SubCoord,
     parseCommand,
     readCommandsList,
-    prodSubCoord) where
+    readCommandsList2,
+    newSubWithAim,
+    prodSubCoord,
+    prodSubCoord2 ) where
 
 data Command = Forward Integer | Up Integer | Down Integer deriving (Show)
 type SubCoord = (Integer, Integer) --- (Horizontal position, Vertical position)
@@ -48,3 +51,7 @@ processCommandProb2 (horiPos, vertPos, aim) com = (horiPos + hstep, vertPos + vs
         internProcessCommand (Down step)    = (0, 0, step)
         internProcessCommand (Up step)      = (0, 0, -step)
         internProcessCommand (Forward step) = (step, step * aim, 0)
+
+-- Using foldl here for a more Haskell like solution
+readCommandsList2 :: SubWithAim -> [Command] -> SubWithAim
+readCommandsList2 = foldl (processCommandProb2)
