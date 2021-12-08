@@ -4,7 +4,7 @@ module BinaryPowerReport (
 ) where
 
 import Data.List
-import Data.Streaming.Network (bindPortGen)
+
 -- Defining a type for binary numbers
 -- This number is defined backwards because this is easier to work with
 data Bin = LSB | One Bin | Zero Bin deriving Show
@@ -86,6 +86,43 @@ calcEpsilon = binNot
 calcTemperature :: BinReport -> Integer
 calcTemperature report = toInt gamma * toInt epsilon
     where
-        processedReportData = map (countOnesAndZeros . toBinary) $ transpose report
+        processedReportData = processReportData report
         gamma               = calcGamma processedReportData
         epsilon             = calcEpsilon gamma 
+
+processReportData :: BinReport -> [(Integer,Integer)]
+processReportData report = map (countOnesAndZeros . toBinary) $ transpose report
+
+scrubOxygen :: BinReport -> Bin
+scrubOxygen report = toBinary $ scrubOxygenAlg report processedReportData 0
+    where
+        processedReportData = processReportData report
+        scrubOxygenAlg [binNumber] _ _                  = binNumber
+        scrubOxygenAlg binReport pairsList bitPlace 
+            | ones < zeros = scrubOxygenAlg keepZerosRest newPairsList (bitPlace + 1)
+            | otherwise    = scrubOxygenAlg keepOnesRest newPairsList (bitPlace + 1)
+            where 
+                (ones, zeros) = pairsList !! bitPlace
+                keepOnesRest  = filter (\x -> x !! bitPlace == 1) binReport 
+                keepZerosRest = filter (\x -> x !! bitPlace == 0) binReport
+                newPairsList  = if ones < zeros then
+                                    processReportData keepZerosRest 
+                                else
+                                    processReportData keepOnesRest
+
+scrubCO2 :: BinReport -> Bin
+scrubCO2 report = toBinary $ scrubCO2Alg report processedReportData 0
+    where
+        processedReportData = processReportData report
+        scrubCO2Alg [binNumber] _ _                  = binNumber
+        scrubCO2Alg binReport pairsList bitPlace 
+            | ones > zeros = scrubCO2Alg keepZerosRest newPairsList (bitPlace + 1)
+            | otherwise    = scrubCO2Alg keepOnesRest newPairsList (bitPlace + 1)
+            where 
+                (ones, zeros) = pairsList !! bitPlace
+                keepOnesRest  = filter (\x -> x !! bitPlace == 1) binReport 
+                keepZerosRest = filter (\x -> x !! bitPlace == 0) binReport
+                newPairsList  = if ones < zeros then
+                                    processReportData keepZerosRest 
+                                else
+                                    processReportData keepOnesRest
