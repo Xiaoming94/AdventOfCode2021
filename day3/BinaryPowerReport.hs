@@ -93,6 +93,8 @@ calcTemperature report = toInt gamma * toInt epsilon
 processReportData :: BinReport -> [(Integer,Integer)]
 processReportData report = map (countOnesAndZeros . toBinary) $ transpose report
 
+
+-- Calculating life support rating algorithms, these are for Problem 2
 scrubOxygen :: BinReport -> Bin
 scrubOxygen report = toBinary $ scrubOxygenAlg report processedReportData 0
     where
@@ -126,3 +128,6 @@ scrubCO2 report = toBinary $ scrubCO2Alg report processedReportData 0
                                     processReportData keepZerosRest 
                                 else
                                     processReportData keepOnesRest
+
+calcLifeSupportRating :: BinReport -> Integer
+calcLifeSupportRating report = (toInt . scrubOxygen $ report) * (toInt . scrubCO2 $ report)
