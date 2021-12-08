@@ -1,6 +1,7 @@
 module BinaryPowerReport (
    Bin (..),
-   calcTemperature
+   calcTemperature,
+   calcLifeSupportRating
 ) where
 
 import Data.List
@@ -105,8 +106,8 @@ scrubOxygen report = toBinary $ scrubOxygenAlg report processedReportData 0
             | otherwise    = scrubOxygenAlg keepOnesRest newPairsList (bitPlace + 1)
             where 
                 (ones, zeros) = pairsList !! bitPlace
-                keepOnesRest  = filter (\x -> x !! bitPlace == 1) binReport 
-                keepZerosRest = filter (\x -> x !! bitPlace == 0) binReport
+                keepOnesRest  = filter (\x -> (x !! bitPlace) == 1) binReport 
+                keepZerosRest = filter (\x -> (x !! bitPlace) == 0) binReport
                 newPairsList  = if ones < zeros then
                                     processReportData keepZerosRest 
                                 else
@@ -118,12 +119,12 @@ scrubCO2 report = toBinary $ scrubCO2Alg report processedReportData 0
         processedReportData = processReportData report
         scrubCO2Alg [binNumber] _ _                  = binNumber
         scrubCO2Alg binReport pairsList bitPlace 
-            | ones > zeros = scrubCO2Alg keepZerosRest newPairsList (bitPlace + 1)
-            | otherwise    = scrubCO2Alg keepOnesRest newPairsList (bitPlace + 1)
+            | ones < zeros = scrubCO2Alg keepOnesRest newPairsList (bitPlace + 1)
+            | otherwise    = scrubCO2Alg keepZerosRest newPairsList (bitPlace + 1)
             where 
                 (ones, zeros) = pairsList !! bitPlace
-                keepOnesRest  = filter (\x -> x !! bitPlace == 1) binReport 
-                keepZerosRest = filter (\x -> x !! bitPlace == 0) binReport
+                keepOnesRest  = filter (\x -> (x !! bitPlace) == 1) binReport 
+                keepZerosRest = filter (\x -> (x !! bitPlace) == 0) binReport
                 newPairsList  = if ones < zeros then
                                     processReportData keepZerosRest 
                                 else
