@@ -92,43 +92,36 @@ calcTemperature report = toInt gamma * toInt epsilon
         epsilon             = calcEpsilon gamma 
 
 processReportData :: BinReport -> [(Integer,Integer)]
-processReportData report = map (countOnesAndZeros . toBinary) $ transpose report
+processReportData report = map readDataRow $ transpose report
 
+
+readDataRow :: [Integer] -> (Integer,Integer)
+readDataRow row = (countOnesAndZeros . toBinary) row
 
 -- Calculating life support rating algorithms, these are for Problem 2
 scrubOxygen :: BinReport -> Bin
-scrubOxygen report = toBinary $ scrubOxygenAlg report processedReportData 0
+scrubOxygen report = toBinary $ scrubOxygenAlg report 0
     where
-        processedReportData = processReportData report
-        scrubOxygenAlg [binNumber] _ _                  = binNumber
-        scrubOxygenAlg binReport pairsList bitPlace 
-            | ones < zeros = scrubOxygenAlg keepZerosRest newPairsList (bitPlace + 1)
-            | otherwise    = scrubOxygenAlg keepOnesRest newPairsList (bitPlace + 1)
+        scrubOxygenAlg [binNumber] _ = binNumber
+        scrubOxygenAlg binReport bitPlace 
+            | ones < zeros = scrubOxygenAlg keepZerosRest (bitPlace + 1)
+            | otherwise    = scrubOxygenAlg keepOnesRest (bitPlace + 1)
             where 
-                (ones, zeros) = pairsList !! bitPlace
+                (ones, zeros) = readDataRow $ (transpose binReport) !! bitPlace
                 keepOnesRest  = filter (\x -> (x !! bitPlace) == 1) binReport 
                 keepZerosRest = filter (\x -> (x !! bitPlace) == 0) binReport
-                newPairsList  = if ones < zeros then
-                                    processReportData keepZerosRest 
-                                else
-                                    processReportData keepOnesRest
 
 scrubCO2 :: BinReport -> Bin
-scrubCO2 report = toBinary $ scrubCO2Alg report processedReportData 0
+scrubCO2 report = toBinary $ scrubCO2Alg report 0
     where
-        processedReportData = processReportData report
-        scrubCO2Alg [binNumber] _ _                  = binNumber
-        scrubCO2Alg binReport pairsList bitPlace 
-            | ones < zeros = scrubCO2Alg keepOnesRest newPairsList (bitPlace + 1)
-            | otherwise    = scrubCO2Alg keepZerosRest newPairsList (bitPlace + 1)
+        scrubCO2Alg [binNumber] _ = binNumber
+        scrubCO2Alg binReport bitPlace 
+            | ones < zeros = scrubCO2Alg keepOnesRest (bitPlace + 1)
+            | otherwise    = scrubCO2Alg keepZerosRest (bitPlace + 1)
             where 
-                (ones, zeros) = pairsList !! bitPlace
+                (ones, zeros) = readDataRow $ (transpose binReport) !! bitPlace
                 keepOnesRest  = filter (\x -> (x !! bitPlace) == 1) binReport 
                 keepZerosRest = filter (\x -> (x !! bitPlace) == 0) binReport
-                newPairsList  = if ones < zeros then
-                                    processReportData keepOnesRest 
-                                else
-                                    processReportData keepZerosRest
 
 calcLifeSupportRating :: BinReport -> Integer
 calcLifeSupportRating report = (toInt . scrubOxygen $ report) * (toInt . scrubCO2 $ report)
