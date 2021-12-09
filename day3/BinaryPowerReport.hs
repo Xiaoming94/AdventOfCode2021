@@ -126,9 +126,9 @@ scrubCO2 report = toBinary $ scrubCO2Alg report processedReportData 0
                 keepOnesRest  = filter (\x -> (x !! bitPlace) == 1) binReport 
                 keepZerosRest = filter (\x -> (x !! bitPlace) == 0) binReport
                 newPairsList  = if ones < zeros then
-                                    processReportData keepZerosRest 
+                                    processReportData keepOnesRest 
                                 else
-                                    processReportData keepOnesRest
+                                    processReportData keepZerosRest
 
 calcLifeSupportRating :: BinReport -> Integer
 calcLifeSupportRating report = (toInt . scrubOxygen $ report) * (toInt . scrubCO2 $ report)
